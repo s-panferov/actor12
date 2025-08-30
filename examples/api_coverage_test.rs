@@ -31,7 +31,8 @@ impl Actor for TestActor {
     }
 
     async fn handle(&mut self, _ctx: Exec<'_, Self>, msg: Self::Message) {
-        let response = format!("Actor {} processed: {}", self.name, msg.value.0);
+        self.counter += 1;
+        let response = format!("Actor {} (call #{}) processed: {}", self.name, self.counter, msg.value.0);
         let _ = msg.reply.send(Ok(response));
     }
 }

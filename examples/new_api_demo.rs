@@ -13,7 +13,7 @@ pub struct SimpleActor {
 
 // Direct envelope messages
 type IncrementMessage = Envelope<i32, anyhow::Result<i32>>;
-type GetValueMessage = Envelope<(), anyhow::Result<i32>>;
+// GetValueMessage removed as it's not used in this example
 
 impl Actor for SimpleActor {
     type Spec = i32; // initial value
