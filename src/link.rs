@@ -20,6 +20,7 @@ use crate::error::ActorSendError;
 use crate::error::FromError;
 use crate::handler::Handler;
 use crate::multi::Multi;
+use crate::message::{MessageHandle, SendableMessage};
 
 pub trait ActorLike: 'static + Send + Sync + Sized {
 	type Cancel: Clone + Default + Send + Sync + 'static;
@@ -47,6 +48,13 @@ pub struct LinkState<A: ActorLike> {
 
 pub struct Link<A: ActorLike> {
 	pub(crate) state: Arc<LinkState<A>>,
+}
+
+impl<A: ActorLike> Link<A> {
+	/// Get reference to the sender for use in message implementations
+	pub(crate) fn sender(&self) -> &<A::Channel as ActorChannel>::Sender {
+		&self.state.tx
+	}
 }
 
 impl<A: ActorLike> Debug for Link<A>
@@ -96,6 +104,16 @@ impl<A: ActorLike> Link<A> {
 }
 
 impl<A: ActorLike> Link<A> {
+	/// New unified send method - returns handle for reply or forget
+	pub async fn send_message<M>(&self, message: M) -> MessageHandle<M::Reply>
+	where
+		M: SendableMessage<A>,
+	{
+		message.send_to(self).await
+	}
+
+	// ========== EXISTING API - PRESERVED FOR BACKWARD COMPATIBILITY ==========
+
 	pub async fn ask_dyn_async<T>(&self, message: T) -> BoxFuture<'static, <A as Handler<T>>::Reply>
 	where
 		T: SyncTrait,

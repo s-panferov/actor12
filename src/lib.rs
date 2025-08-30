@@ -10,6 +10,7 @@ mod proxy;
 mod weak;
 mod cancel;
 mod countme;
+mod message;
 
 pub mod prelude {
 	pub use super::actor::Actor;
@@ -35,6 +36,7 @@ pub use link::Link;
 pub use multi::Multi;
 pub use proxy::Proxy;
 pub use weak::WeakLink;
+pub use message::{MessageHandle, MessageError, SendableMessage, HandlerMessage, MessageHandleExt, EnvelopeMessage};
 
 pub fn spawn<A: Actor>(spec: A::Spec) -> Link<A> {
 	A::spawn(spec)
