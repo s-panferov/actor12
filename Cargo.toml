@@ -1,0 +1,52 @@
+[package]
+authors = ["Stanislav Panferov <stanislav@panferov.dev>"]
+edition = "2024"
+name = "runy-actor"
+version = "0.0.4"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+futures = "0.3"
+anyhow = "1.0"
+arc-swap = "1.0"
+thiserror = "1.0"
+downcast-rs = "1.2"
+take-once = "0.1.2"
+metrics = "0.23"
+parking_lot = "0.12"
+dashmap = "6.0"
+
+[dev-dependencies]
+
+[[example]]
+name = "basic_actor"
+path = "examples/basic_actor.rs"
+
+[[example]]
+name = "ping_pong"
+path = "examples/ping_pong.rs"
+
+[[example]]
+name = "bank_account"
+path = "examples/bank_account.rs"
+
+[[example]]
+name = "worker_pool"
+path = "examples/worker_pool.rs"
+
+[[example]]
+name = "simple_counter"
+path = "examples/simple_counter.rs"
+
+[[example]]
+name = "echo_server"
+path = "examples/echo_server.rs"
+
+[[example]]
+name = "handler_pattern"
+path = "examples/handler_pattern.rs"
+
+[[example]]
+name = "dynamic_dispatch"
+path = "examples/dynamic_dispatch.rs"
