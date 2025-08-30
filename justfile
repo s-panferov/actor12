@@ -35,9 +35,6 @@ test:
 example name:
     cargo run --example {{name}}
 
-# Run the comprehensive API coverage test
-test-api-coverage:
-    cargo run --example api_coverage_test
 
 # Format code
 fmt:
@@ -64,7 +61,6 @@ ci:
     cargo fmt --check
     cargo clippy -- -D warnings  
     cargo test
-    just test-api-coverage
     just docs-test
     just docs-check
 

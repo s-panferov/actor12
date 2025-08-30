@@ -79,7 +79,6 @@ mod proxy;
 mod weak;
 mod cancel;
 mod countme;
-mod message;
 
 /// Common imports for working with the Actor12 framework.
 ///
@@ -109,7 +108,6 @@ pub use link::Link;
 pub use multi::Multi;
 pub use proxy::Proxy;
 pub use weak::WeakLink;
-pub use message::{MessageHandle, MessageError, SendableMessage, WeakSendableMessage, HandlerMessage, MessageHandleExt, EnvelopeMessage, RelayMessage};
 
 /// Spawn a new actor instance with the given specification.
 ///

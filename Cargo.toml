@@ -59,6 +59,3 @@ path = "examples/handler_pattern.rs"
 name = "dynamic_dispatch"
 path = "examples/dynamic_dispatch.rs"
 
-[[example]]
-name = "new_api_demo"
-path = "examples/new_api_demo.rs"

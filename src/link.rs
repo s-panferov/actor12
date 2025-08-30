@@ -20,9 +20,6 @@ use crate::error::ActorSendError;
 use crate::error::FromError;
 use crate::handler::Handler;
 use crate::multi::Multi;
-use crate::message::{MessageHandle, SendableMessage};
-use std::time::Duration;
-use tokio::sync::oneshot;
 
 pub trait ActorLike: 'static + Send + Sync + Sized {
 	type Cancel: Clone + Default + Send + Sync + 'static;
@@ -52,12 +49,6 @@ pub struct Link<A: ActorLike> {
 	pub(crate) state: Arc<LinkState<A>>,
 }
 
-impl<A: ActorLike> Link<A> {
-	/// Get reference to the sender for use in message implementations
-	pub(crate) fn sender(&self) -> &<A::Channel as ActorChannel>::Sender {
-		&self.state.tx
-	}
-}
 
 impl<A: ActorLike> Debug for Link<A>
 where
@@ -106,54 +97,6 @@ impl<A: ActorLike> Link<A> {
 }
 
 impl<A: ActorLike> Link<A> {
-	/// New unified send method - returns handle for reply or forget
-	pub async fn send_message<M>(&self, message: M) -> MessageHandle<M::Reply>
-	where
-		M: SendableMessage<A>,
-	{
-		message.send_to(self).await
-	}
-
-	/// Send raw message - equivalent to old send_raw method
-	pub async fn send_raw_message(&self, message: A::Message) -> MessageHandle<Result<(), ActorSendError<A>>> {
-		let (tx, rx) = oneshot::channel();
-		
-		match self.state.tx.send(message).await {
-			Ok(()) => {
-				let _ = tx.send(Ok(()));
-			}
-			Err(e) => {
-				let _ = tx.send(Err(e));
-			}
-		}
-		
-		MessageHandle::success(rx)
-	}
-
-	/// Convenience method: send and get reply immediately (equivalent to old send/ask_dyn)
-	pub async fn send_and_reply<M>(&self, message: M) -> Result<M::Reply, crate::message::MessageError>
-	where
-		M: SendableMessage<A>,
-	{
-		self.send_message(message).await.reply().await
-	}
-
-	/// Convenience method: send and forget (equivalent to old tell_dyn)
-	pub async fn send_and_forget<M>(&self, message: M)
-	where
-		M: SendableMessage<A>,
-	{
-		self.send_message(message).await.forget();
-	}
-
-	/// Convenience method: send with timeout (new capability)
-	pub async fn send_with_timeout<M>(&self, message: M, timeout: Duration) -> Result<M::Reply, crate::message::MessageError>
-	where
-		M: SendableMessage<A>,
-	{
-		self.send_message(message).await.timeout(timeout).reply().await
-	}
-
 	// ========== EXISTING API - PRESERVED FOR BACKWARD COMPATIBILITY ==========
 
 	pub async fn ask_dyn_async<T>(&self, message: T) -> BoxFuture<'static, <A as Handler<T>>::Reply>
