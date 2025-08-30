@@ -1,5 +1,7 @@
 # Actor12 Framework
 
+[![Documentation](https://docs.rs/actor12/badge.svg)](https://docs.rs/actor12)
+
 A lightweight, high-performance actor framework for Rust built on Tokio. This is a standalone version of the actor system extracted from the Runy project.
 
 ## Features
@@ -16,50 +18,13 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-runy-actor = { path = "." }
+actor12 = "0.0.4"
 tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
 futures = "0.3"
 ```
 
-## Basic Example
-
-```rust
-use actor12{Actor, Envelope, Exec, Init, MpscChannel, spawn};
-
-// Define your actor
-pub struct EchoServer;
-
-// Define the message type
-type EchoMessage = Envelope<String, anyhow::Result<String>>;
-
-impl Actor for EchoServer {
-    type Spec = ();
-    type Message = EchoMessage;
-    type Channel = MpscChannel<Self::Message>;
-    type Cancel = ();
-    type State = ();
-
-    fn state(_spec: &Self::Spec) -> Self::State {}
-
-    fn init(_ctx: Init<'_, Self>) -> impl Future<Output = Result<Self, Self::Cancel>> + Send + 'static {
-        futures::future::ready(Ok(EchoServer))
-    }
-
-    async fn handle(&mut self, _ctx: Exec<'_, Self>, msg: Self::Message) {
-        let response = format!("Echo: {}", msg.value);
-        msg.reply.send(Ok(response)).unwrap();
-    }
-}
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    let echo = spawn::<EchoServer>(());
-    let response: anyhow::Result<String> = echo.send("Hello".to_string()).await;
-    println!("{}", response?);
-    Ok(())
-}
-```
+For complete examples and API documentation, see the [documentation](https://docs.rs/actor12).
 
 ## Examples
 
@@ -97,53 +62,14 @@ cargo run --example worker_pool
 
 ## Core Concepts
 
-### Actors
+The Actor12 framework is built around several key concepts:
 
-Actors are the fundamental unit of computation. Each actor:
-- Has its own state
-- Processes messages sequentially 
-- Can spawn child actors
-- Communicates only through message passing
+- **Actors**: Isolated units of computation with their own state
+- **Messages**: Type-safe communication via `Envelope<T, R>` or `Handler<M>` patterns  
+- **Links**: Thread-safe handles for sending messages to actors
+- **Cancellation**: Hierarchical shutdown system for clean resource management
 
-### Messages
-
-Messages are sent through `Envelope<T, R>` where:
-- `T` is the message payload type
-- `R` is the expected response type
-
-### Links
-
-`Link<A>` provides a handle to send messages to actor `A`. Links are:
-- Cloneable and thread-safe
-- Used to send messages via `.send(message).await` for `Envelope<T, R>` messages
-- Used to send typed messages via `.ask_dyn(message).await` for `Handler<M>` implementations
-- Automatically handle response routing
-
-### Handler Pattern
-
-The `Handler<M>` trait allows actors to handle multiple message types:
-
-```rust
-impl Handler<String> for MyActor {
-    type Reply = Result<String, anyhow::Error>;
-    
-    async fn handle(&mut self, ctx: Call<'_, Self, Self::Reply>, msg: String) -> Self::Reply {
-        Ok(format!("Received: {}", msg))
-    }
-}
-```
-
-For actors using `Multi<A>` as their message type, you can:
-- Implement `Handler<T>` for different message types `T`
-- Use `.ask_dyn(message).await` to send messages dynamically
-- Handle different types of requests in the same actor
-
-### Cancellation
-
-The framework provides hierarchical cancellation:
-- Parent actors can cancel child actors
-- Cancellation propagates through the actor tree
-- Clean shutdown is handled automatically
+For detailed explanations and examples, see the [API documentation](https://docs.rs/actor12).
 
 ## Testing
 
