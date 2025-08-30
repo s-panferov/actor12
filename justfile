@@ -20,6 +20,13 @@ docs-clean:
 docs-check:
     cargo doc --no-deps
 
+# Typecheck and test everything (code, tests, and docs)
+check-all:
+    cargo check
+    cargo nextest run
+    cargo test --doc
+    cargo doc --no-deps
+
 # Run Rust tests
 test:
     cargo test
