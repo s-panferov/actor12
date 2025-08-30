@@ -233,7 +233,7 @@ where
     }
 }
 
-/// Implementation for Handler-style messages (Multi<A> message type)
+/// Implementation for Handler-style messages (`Multi<A>` message type)
 impl<A, T> SendableMessage<A> for HandlerMessage<T>
 where
     A: ActorLike<Message = Multi<A>> + Handler<T>,

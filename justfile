@@ -1,34 +1,24 @@
 # Actor12 Development Tasks
 
-# Install documentation dependencies
-docs-install:
-    cd docs && npm install
-
-# Start documentation development server
-docs-dev:
-    cd docs && npm run dev
-
-# Build documentation for production
+# Build documentation with rustdoc
 docs-build:
-    cd docs && npm run build
+    cargo doc --no-deps --document-private-items
 
-# Preview documentation production build
-docs-preview:
-    cd docs && npm run preview
+# Build and open documentation
+docs-open:
+    cargo doc --no-deps --document-private-items --open
+
+# Test documentation (compile doc tests)
+docs-test:
+    cargo test --doc
 
 # Clean documentation build artifacts
 docs-clean:
-    rm -rf docs/dist docs/.astro
+    rm -rf target/doc
 
-# Setup documentation (install deps and start dev server)
-docs-setup:
-    just docs-install
-    just docs-dev
-
-# Build and test documentation
-docs-test:
-    just docs-build
-    just docs-preview
+# Check documentation for broken links and warnings
+docs-check:
+    cargo doc --no-deps
 
 # Run Rust tests
 test:
@@ -61,7 +51,6 @@ clean:
 # Full development setup
 setup:
     cargo build
-    just docs-install
 
 # Run all checks
 ci:
@@ -69,7 +58,8 @@ ci:
     cargo clippy -- -D warnings  
     cargo test
     just test-api-coverage
-    just docs-build
+    just docs-test
+    just docs-check
 
 # Preview what history cleaning would do (safe)
 preview-clean-history:

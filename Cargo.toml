@@ -3,6 +3,14 @@ authors = ["Stanislav Panferov <stanislav@panferov.dev>"]
 edition = "2024"
 name = "runy-actor"
 version = "0.0.4"
+description = "A lightweight actor framework for Rust with async support"
+documentation = "https://docs.rs/runy-actor"
+repository = "https://github.com/stanislav-panferov/actor12"
+license = "MIT"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }

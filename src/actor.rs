@@ -16,28 +16,52 @@ use crate::handler::Exec;
 use crate::link::ActorLike;
 use crate::link::Link;
 
+/// Runtime context for an active actor instance.
+///
+/// This structure contains all the necessary components for an actor's execution,
+/// including message reception, cancellation handling, and task spawning capabilities.
 pub struct ActorContext<A: ActorLike> {
+	/// Message receiver for incoming actor messages
 	pub rx: <A::Channel as ActorChannel>::Receiver,
+	/// Cancellation token for graceful shutdown
 	pub token: CancelToken<A::Cancel>,
+	/// Task set for managing spawned futures
 	pub futures: JoinSet<()>,
+	/// Tracing span for observability
 	pub span: tracing::Span,
+	/// Weak reference to the actor's link
 	pub link: WeakLink<A>,
 }
 
 impl<A: Actor> ActorContext<A> {
+	/// Spawn a background task within the actor's context.
+	///
+	/// The spawned task will be automatically cancelled when the actor shuts down.
 	pub fn spawn(&mut self, future: impl Future<Output = ()> + Send + 'static) {
 		self.futures.spawn(future);
 	}
 }
 
+/// Initialization context provided to actors during startup.
+///
+/// This structure contains everything needed for an actor to initialize itself,
+/// including the initialization specification and the ability to spawn background tasks.
 pub struct Init<'a, A: Actor> {
+	/// The specification data required for actor initialization
 	pub spec: A::Spec,
+	/// Task set for spawning background tasks during initialization
 	pub tasks: &'a mut JoinSet<()>,
+	/// A strong link to the actor being initialized
 	pub link: Link<A>,
+	/// Cancellation token for the initialization process
 	pub token: CancelToken<A::Cancel>,
 }
 
 impl<A: Actor> Init<'_, A> {
+	/// Spawn a background task during actor initialization.
+	///
+	/// The spawned task will run alongside the actor and be automatically
+	/// cancelled when the actor shuts down.
 	pub fn spawn<F>(&mut self, future: F)
 	where
 		F: Future<Output = ()> + Send + 'static,

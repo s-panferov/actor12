@@ -4,7 +4,7 @@ on:
   # Runs on pushes to main branch
   push:
     branches: ["main"]
-    paths: ["docs/**"]
+    paths: ["src/**", "Cargo.toml", "README.md"]
   
   # Allows manual trigger from Actions tab
   workflow_dispatch:
@@ -23,34 +23,28 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./docs
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: './docs/package-lock.json'
-          
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
         
-      - name: Install dependencies
-        run: npm ci
+      - name: Build documentation with rustdoc
+        run: cargo doc --no-deps --document-private-items
         
-      - name: Build documentation
-        run: npm run build
+      - name: Add redirect index.html
+        run: |
+          echo '<meta http-equiv="refresh" content="0; url=runy_actor">' > target/doc/index.html
         
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/dist
+          path: ./target/doc
 
   deploy:
     needs: build
