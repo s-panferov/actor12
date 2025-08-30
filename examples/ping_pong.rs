@@ -1,5 +1,5 @@
 use runy_actor::prelude::*;
-use runy_actor::Link;
+use runy_actor::{Multi, MpscChannel, Call, spawn, Link};
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -27,27 +27,35 @@ pub struct Pong(pub u32);
 // Ping Actor implementation
 impl Actor for PingActor {
     type Spec = ();
+    type Message = Multi<Self>;
+    type Channel = MpscChannel<Self::Message>;
+    type Cancel = ();
+    type State = ();
 
-    async fn init(_: Self::Spec) -> anyhow::Result<Self> {
-        println!("PingActor initialized");
-        Ok(PingActor {
-            pong_actor: None,
-            ping_count: 0,
-        })
+    fn state(_spec: &Self::Spec) -> Self::State {}
+
+    fn init(_ctx: Init<'_, Self>) -> impl Future<Output = Result<Self, Self::Cancel>> + Send + 'static {
+        async move {
+            println!("PingActor initialized");
+            Ok(PingActor {
+                pong_actor: None,
+                ping_count: 0,
+            })
+        }
     }
 }
 
 impl Handler<StartPing> for PingActor {
-    type Reply = ();
+    type Reply = Result<(), anyhow::Error>;
 
-    async fn exec(&mut self, msg: StartPing) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: StartPing) -> Self::Reply {
         self.pong_actor = Some(msg.0);
         
         // Start the ping-pong game
         if let Some(ref pong) = self.pong_actor {
             self.ping_count += 1;
             println!("Ping #{}", self.ping_count);
-            pong.call(Ping(self.ping_count)).await?;
+            let _ = pong.ask_dyn(Ping(self.ping_count)).await;
         }
         
         Ok(())
@@ -55,9 +63,9 @@ impl Handler<StartPing> for PingActor {
 }
 
 impl Handler<Pong> for PingActor {
-    type Reply = ();
+    type Reply = Result<(), anyhow::Error>;
 
-    async fn exec(&mut self, msg: Pong) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Pong) -> Self::Reply {
         println!("Received Pong #{}", msg.0);
         
         // Continue ping-pong for a few rounds
@@ -65,7 +73,7 @@ impl Handler<Pong> for PingActor {
             if let Some(ref pong) = self.pong_actor {
                 self.ping_count += 1;
                 println!("Ping #{}", self.ping_count);
-                pong.call(Ping(self.ping_count)).await?;
+                let _ = pong.ask_dyn(Ping(self.ping_count)).await;
             }
         } else {
             println!("Ping-pong game finished!");
@@ -78,17 +86,25 @@ impl Handler<Pong> for PingActor {
 // Pong Actor implementation
 impl Actor for PongActor {
     type Spec = ();
+    type Message = Multi<Self>;
+    type Channel = MpscChannel<Self::Message>;
+    type Cancel = ();
+    type State = ();
 
-    async fn init(_: Self::Spec) -> anyhow::Result<Self> {
-        println!("PongActor initialized");
-        Ok(PongActor { pong_count: 0 })
+    fn state(_spec: &Self::Spec) -> Self::State {}
+
+    fn init(_ctx: Init<'_, Self>) -> impl Future<Output = Result<Self, Self::Cancel>> + Send + 'static {
+        async move {
+            println!("PongActor initialized");
+            Ok(PongActor { pong_count: 0 })
+        }
     }
 }
 
 impl Handler<Ping> for PongActor {
-    type Reply = ();
+    type Reply = Result<(), anyhow::Error>;
 
-    async fn exec(&mut self, msg: Ping) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Ping) -> Self::Reply {
         self.pong_count += 1;
         println!("Received Ping #{}, sending Pong #{}", msg.0, self.pong_count);
         
@@ -114,22 +130,31 @@ pub struct Ball(pub u32);
 
 impl Actor for PingPong {
     type Spec = bool; // true for ping, false for pong
+    type Message = Multi<Self>;
+    type Channel = MpscChannel<Self::Message>;
+    type Cancel = ();
+    type State = ();
 
-    async fn init(is_ping: Self::Spec) -> anyhow::Result<Self> {
-        let name = if is_ping { "Ping" } else { "Pong" };
-        println!("{} actor initialized", name);
-        Ok(PingPong {
-            other_actor: None,
-            is_ping,
-            count: 0,
-        })
+    fn state(_spec: &Self::Spec) -> Self::State {}
+
+    fn init(ctx: Init<'_, Self>) -> impl Future<Output = Result<Self, Self::Cancel>> + Send + 'static {
+        let is_ping = ctx.spec;
+        async move {
+            let name = if is_ping { "Ping" } else { "Pong" };
+            println!("{} actor initialized", name);
+            Ok(PingPong {
+                other_actor: None,
+                is_ping,
+                count: 0,
+            })
+        }
     }
 }
 
 impl Handler<Connect> for PingPong {
-    type Reply = ();
+    type Reply = Result<(), anyhow::Error>;
 
-    async fn exec(&mut self, msg: Connect) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Connect) -> Self::Reply {
         self.other_actor = Some(msg.0);
         
         // If this is the ping actor, start the game
@@ -137,7 +162,7 @@ impl Handler<Connect> for PingPong {
             if let Some(ref other) = self.other_actor {
                 self.count = 1;
                 println!("Ping sends ball #{}", self.count);
-                other.call(Ball(self.count)).await?;
+                let _ = other.ask_dyn(Ball(self.count)).await;
             }
         }
         
@@ -146,9 +171,9 @@ impl Handler<Connect> for PingPong {
 }
 
 impl Handler<Ball> for PingPong {
-    type Reply = ();
+    type Reply = Result<(), anyhow::Error>;
 
-    async fn exec(&mut self, msg: Ball) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Ball) -> Self::Reply {
         let name = if self.is_ping { "Ping" } else { "Pong" };
         println!("{} receives ball #{}", name, msg.0);
         
@@ -156,7 +181,7 @@ impl Handler<Ball> for PingPong {
             if let Some(ref other) = self.other_actor {
                 let next_count = msg.0 + 1;
                 println!("{} sends ball #{}", name, next_count);
-                other.call(Ball(next_count)).await?;
+                let _ = other.ask_dyn(Ball(next_count)).await;
             }
         } else {
             println!("{} stops the game at ball #{}", name, msg.0);
@@ -169,12 +194,12 @@ impl Handler<Ball> for PingPong {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Spawn ping and pong actors
-    let ping = PingPong::spawn(true);
-    let pong = PingPong::spawn(false);
+    let ping = spawn::<PingPong>(true);
+    let pong = spawn::<PingPong>(false);
 
     // Connect them
-    ping.call(Connect(pong.clone())).await?;
-    pong.call(Connect(ping)).await?;
+    let _ = ping.ask_dyn(Connect(pong.clone())).await;
+    let _ = pong.ask_dyn(Connect(ping)).await;
 
     // Wait for the game to finish
     sleep(Duration::from_secs(2)).await;

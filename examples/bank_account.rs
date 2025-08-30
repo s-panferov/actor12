@@ -1,4 +1,5 @@
 use runy_actor::prelude::*;
+use runy_actor::{Multi, MpscChannel, Call, spawn, Link};
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -39,20 +40,29 @@ pub enum BankError {
 
 impl Actor for BankAccount {
     type Spec = (String, f64); // (account_number, initial_balance)
+    type Message = Multi<Self>;
+    type Channel = MpscChannel<Self::Message>;
+    type Cancel = ();
+    type State = ();
 
-    async fn init((account_number, initial_balance): Self::Spec) -> anyhow::Result<Self> {
-        println!("Bank account {} created with initial balance: ${:.2}", account_number, initial_balance);
-        Ok(BankAccount {
-            balance: initial_balance,
-            account_number,
-        })
+    fn state(_spec: &Self::Spec) -> Self::State {}
+
+    fn init(ctx: Init<'_, Self>) -> impl Future<Output = Result<Self, Self::Cancel>> + Send + 'static {
+        let (account_number, initial_balance) = ctx.spec;
+        async move {
+            println!("Bank account {} created with initial balance: ${:.2}", account_number, initial_balance);
+            Ok(BankAccount {
+                balance: initial_balance,
+                account_number,
+            })
+        }
     }
 }
 
 impl Handler<Deposit> for BankAccount {
-    type Reply = f64;
+    type Reply = Result<f64, anyhow::Error>;
 
-    async fn exec(&mut self, msg: Deposit) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Deposit) -> Self::Reply {
         if msg.amount <= 0.0 {
             return Err(BankError::InvalidAmount { amount: msg.amount }.into());
         }
@@ -65,9 +75,9 @@ impl Handler<Deposit> for BankAccount {
 }
 
 impl Handler<Withdraw> for BankAccount {
-    type Reply = f64;
+    type Reply = Result<f64, anyhow::Error>;
 
-    async fn exec(&mut self, msg: Withdraw) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Withdraw) -> Self::Reply {
         if msg.amount <= 0.0 {
             return Err(BankError::InvalidAmount { amount: msg.amount }.into());
         }
@@ -87,18 +97,18 @@ impl Handler<Withdraw> for BankAccount {
 }
 
 impl Handler<GetBalance> for BankAccount {
-    type Reply = f64;
+    type Reply = Result<f64, anyhow::Error>;
 
-    async fn exec(&mut self, _msg: GetBalance) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, _msg: GetBalance) -> Self::Reply {
         println!("Account {}: Balance inquiry: ${:.2}", self.account_number, self.balance);
         Ok(self.balance)
     }
 }
 
 impl Handler<Transfer> for BankAccount {
-    type Reply = ();
+    type Reply = Result<(), anyhow::Error>;
 
-    async fn exec(&mut self, msg: Transfer) -> anyhow::Result<Self::Reply> {
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, msg: Transfer) -> Self::Reply {
         if msg.amount <= 0.0 {
             return Err(BankError::InvalidAmount { amount: msg.amount }.into());
         }
@@ -116,7 +126,7 @@ impl Handler<Transfer> for BankAccount {
                  self.account_number, msg.amount, self.balance);
 
         // Deposit to target account
-        msg.to_account.call(Deposit { amount: msg.amount }).await?;
+        let _ = msg.to_account.ask_dyn(Deposit { amount: msg.amount }).await?;
         println!("Transfer of ${:.2} completed from {} to target account", 
                  msg.amount, self.account_number);
 
@@ -127,40 +137,40 @@ impl Handler<Transfer> for BankAccount {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Create two bank accounts
-    let alice_account = BankAccount::spawn(("ALICE-001".to_string(), 1000.0));
-    let bob_account = BankAccount::spawn(("BOB-002".to_string(), 500.0));
+    let alice_account = spawn::<BankAccount>(("ALICE-001".to_string(), 1000.0));
+    let bob_account = spawn::<BankAccount>(("BOB-002".to_string(), 500.0));
 
     // Perform some operations
     println!("\n=== Initial Operations ===");
     
     // Check initial balances
-    let alice_balance = alice_account.call(GetBalance).await?;
-    let bob_balance = bob_account.call(GetBalance).await?;
+    let alice_balance = alice_account.ask_dyn(GetBalance).await?;
+    let bob_balance = bob_account.ask_dyn(GetBalance).await?;
     println!("Alice: ${:.2}, Bob: ${:.2}", alice_balance, bob_balance);
 
     // Alice deposits money
-    alice_account.call(Deposit { amount: 200.0 }).await?;
+    let _ = alice_account.ask_dyn(Deposit { amount: 200.0 }).await?;
 
     // Bob withdraws money
-    bob_account.call(Withdraw { amount: 100.0 }).await?;
+    let _ = bob_account.ask_dyn(Withdraw { amount: 100.0 }).await?;
 
     println!("\n=== Transfer Operation ===");
     
     // Alice transfers money to Bob
-    alice_account.call(Transfer { 
+    alice_account.ask_dyn(Transfer { 
         to_account: bob_account.clone(), 
         amount: 300.0 
     }).await?;
 
     println!("\n=== Final Balances ===");
-    let alice_final = alice_account.call(GetBalance).await?;
-    let bob_final = bob_account.call(GetBalance).await?;
+    let alice_final = alice_account.ask_dyn(GetBalance).await?;
+    let bob_final = bob_account.ask_dyn(GetBalance).await?;
     println!("Alice: ${:.2}, Bob: ${:.2}", alice_final, bob_final);
 
     println!("\n=== Error Handling ===");
     
     // Try to withdraw more than available (should fail)
-    match alice_account.call(Withdraw { amount: 2000.0 }).await {
+    match alice_account.ask_dyn(Withdraw { amount: 2000.0 }).await {
         Ok(_) => println!("Withdrawal succeeded unexpectedly!"),
         Err(e) => println!("Withdrawal failed as expected: {}", e),
     }
