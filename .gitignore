@@ -83,3 +83,11 @@ node_modules/
 
 # TernJS port file
 .tern-port
+
+# Documentation build artifacts
+docs/dist/
+docs/.astro/
+docs/node_modules/
+
+# History cleaning script (sensitive - can rewrite git history)
+scripts/clean-history.ts
