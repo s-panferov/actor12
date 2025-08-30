@@ -1,11 +1,11 @@
 [package]
 authors = ["Stanislav Panferov <stanislav@panferov.dev>"]
 edition = "2024"
-name = "runy-actor"
+name = "actor12"
 version = "0.0.4"
 description = "A lightweight actor framework for Rust with async support"
 documentation = "https://docs.rs/runy-actor"
-repository = "https://github.com/stanislav-panferov/actor12"
+repository = "https://github.com/s-panferov/actor12"
 license = "MIT"
 
 [package.metadata.docs.rs]
@@ -58,4 +58,3 @@ path = "examples/handler_pattern.rs"
 [[example]]
 name = "dynamic_dispatch"
 path = "examples/dynamic_dispatch.rs"
-

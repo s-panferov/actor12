@@ -25,7 +25,7 @@ futures = "0.3"
 ## Basic Example
 
 ```rust
-use runy_actor::{Actor, Envelope, Exec, Init, MpscChannel, spawn};
+use actor12{Actor, Envelope, Exec, Init, MpscChannel, spawn};
 
 // Define your actor
 pub struct EchoServer;

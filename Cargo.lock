@@ -3,6 +3,23 @@
 version = 4
 
 [[package]]
+name = "actor12"
+version = "0.0.4"
+dependencies = [
+ "anyhow",
+ "arc-swap",
+ "dashmap",
+ "downcast-rs",
+ "futures",
+ "metrics",
+ "parking_lot",
+ "take-once",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -351,23 +368,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5407465600fb0548f1442edf71dd20683c6ed326200ace4b1ef0763521bb3b77"
 dependencies = [
  "bitflags",
-]
-
-[[package]]
-name = "runy-actor"
-version = "0.0.4"
-dependencies = [
- "anyhow",
- "arc-swap",
- "dashmap",
- "downcast-rs",
- "futures",
- "metrics",
- "parking_lot",
- "take-once",
- "thiserror",
- "tokio",
- "tracing",
 ]
 
 [[package]]

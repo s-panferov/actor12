@@ -20,8 +20,8 @@
 //! ## Quick Start
 //!
 //! ```rust,no_run
-//! use runy_actor::prelude::*;
-//! use runy_actor::{spawn, Envelope, Multi, MpscChannel};
+//! use actor12::prelude::*;
+//! use actor12::{spawn, Envelope, Multi, MpscChannel};
 //!
 //! // Define your actor
 //! struct Counter {
@@ -83,7 +83,7 @@ mod countme;
 /// Common imports for working with the Actor12 framework.
 ///
 /// This module re-exports the most commonly used types and traits,
-/// allowing for convenient imports with `use runy_actor::prelude::*;`
+/// allowing for convenient imports with `use actor12::prelude::*;`
 pub mod prelude {
 	pub use super::actor::Actor;
 	pub use super::actor::Init;
@@ -125,7 +125,7 @@ pub use weak::WeakLink;
 /// # Examples
 ///
 /// ```rust,no_run
-/// use runy_actor::{spawn, Actor, Init, Exec, MpscChannel, Multi};
+/// use actor12::{spawn, Actor, Init, Exec, MpscChannel, Multi};
 ///
 /// struct MyActor;
 ///

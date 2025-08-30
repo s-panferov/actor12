@@ -1,5 +1,5 @@
-use runy_actor::prelude::*;
-use runy_actor::{Multi, MpscChannel, Call, spawn, Link};
+use actor12::prelude::*;
+use actor12::{Multi, MpscChannel, Call, spawn, Link};
 use std::time::Duration;
 use tokio::time::sleep;
 

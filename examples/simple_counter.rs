@@ -1,4 +1,4 @@
-use runy_actor::{Actor, Envelope, Exec, Init, MpscChannel, spawn};
+use actor12::{Actor, Envelope, Exec, Init, MpscChannel, spawn};
 use std::future::Future;
 
 // Define a simple counter actor

@@ -1,4 +1,4 @@
-use runy_actor::{Actor, Call, Handler, Init, MpscChannel, Multi, spawn};
+use actor12::{Actor, Call, Handler, Init, MpscChannel, Multi, spawn};
 use futures::future;
 use std::future::Future;
 

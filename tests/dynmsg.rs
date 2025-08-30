@@ -1,42 +1,42 @@
+use actor12::Actor;
+use actor12::Call;
+use actor12::Handler;
+use actor12::Init;
+use actor12::MpscChannel;
+use actor12::Multi;
+use actor12::prelude::InitFuture;
 use futures::future;
-use runy_actor::Actor;
-use runy_actor::Call;
-use runy_actor::Handler;
-use runy_actor::Init;
-use runy_actor::MpscChannel;
-use runy_actor::Multi;
-use runy_actor::prelude::InitFuture;
 
 struct MultiActor {}
 
 impl Actor for MultiActor {
-	type Cancel = ();
-	type State = ();
-	type Channel = MpscChannel<Self::Message>;
-	type Message = Multi<Self>;
-	type Spec = ();
+    type Cancel = ();
+    type State = ();
+    type Channel = MpscChannel<Self::Message>;
+    type Message = Multi<Self>;
+    type Spec = ();
 
-	fn state(_: &Self::Spec) -> Self::State {
-		()
-	}
+    fn state(_: &Self::Spec) -> Self::State {
+        ()
+    }
 
-	fn init(_: Init<'_, Self>) -> impl InitFuture<Self> {
-		future::ready(Ok(MultiActor {}))
-	}
+    fn init(_: Init<'_, Self>) -> impl InitFuture<Self> {
+        future::ready(Ok(MultiActor {}))
+    }
 }
 
 impl Handler<String> for MultiActor {
-	type Reply = Result<String, anyhow::Error>;
+    type Reply = Result<String, anyhow::Error>;
 
-	async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, _: String) -> Self::Reply {
-		Ok("Hello".to_string())
-	}
+    async fn handle(&mut self, _ctx: Call<'_, Self, Self::Reply>, _: String) -> Self::Reply {
+        Ok("Hello".to_string())
+    }
 }
 
 #[tokio::test]
 async fn test() {
-	let link = runy_actor::spawn::<MultiActor>(());
+    let link = actor12::spawn::<MultiActor>(());
 
-	let value = link.ask_dyn("Test message".to_string()).await;
-	assert_eq!(value.unwrap(), "Hello".to_string());
+    let value = link.ask_dyn("Test message".to_string()).await;
+    assert_eq!(value.unwrap(), "Hello".to_string());
 }
