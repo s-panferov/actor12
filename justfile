@@ -71,3 +71,7 @@ preview-clean-history:
 # Clean git history to remove Claude references (DESTRUCTIVE!)
 clean-history:
     deno run --allow-run --allow-read --allow-write scripts/clean-history.ts
+
+# Publish crate to crates.io
+publish:
+    cargo publish
