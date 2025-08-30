@@ -242,7 +242,7 @@ async fn test_timeout_functionality() {
     // Test two-step API with timeout (give more generous timeout)
     let handle = slow_actor.send_message(HandlerMessage::new(SlowMessage(30))).await;
     assert!(handle.was_sent());
-    let result = handle.reply_timeout(Duration::from_millis(200)).await
+    let result = handle.timeout(Duration::from_millis(200)).reply().await
         .expect("Should complete within timeout")
         .expect("Handler should succeed");
     assert_eq!(result, "Completed after 30ms");

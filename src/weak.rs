@@ -74,7 +74,7 @@ impl<A: Actor> WeakLink<A> {
 	where
 		M: WeakSendableMessage<A>,
 	{
-		self.send_message(message).await.reply_timeout(timeout).await
+		self.send_message(message).await.timeout(timeout).reply().await
 	}
 
 	// ========== EXISTING API - PRESERVED FOR BACKWARD COMPATIBILITY ==========

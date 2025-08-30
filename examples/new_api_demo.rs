@@ -133,7 +133,7 @@ async fn main() -> anyhow::Result<()> {
     println!("   Fire-and-forget increment sent");
 
     // New API: Timeout Pattern
-    match simple_actor.send_message(EnvelopeMessage::new(2)).await.reply_timeout(Duration::from_secs(1)).await {
+    match simple_actor.send_message(EnvelopeMessage::new(2)).await.timeout(Duration::from_secs(1)).reply().await {
         Ok(Ok(value)) => println!("   Timeout reply: {}", value),
         Ok(Err(e)) => println!("   Actor error: {}", e),
         Err(e) => println!("   Timeout error: {}", e),
@@ -166,7 +166,7 @@ async fn main() -> anyhow::Result<()> {
 
     // Set name with timeout
     let name_handle = handler_actor.send_message(HandlerMessage::new(SetNameMsg("Charlie".to_string()))).await;
-    match name_handle.reply_timeout(Duration::from_millis(500)).await {
+    match name_handle.timeout(Duration::from_millis(500)).reply().await {
         Ok(Ok(old_name)) => println!("   Previous name was: {}", old_name),
         Ok(Err(e)) => println!("   Actor error: {}", e),
         Err(e) => println!("   Message error: {}", e),
@@ -245,7 +245,7 @@ async fn main() -> anyhow::Result<()> {
     
     // Process responses
     for (i, handle) in handles.into_iter().enumerate() {
-        match handle.reply_timeout(Duration::from_secs(1)).await {
+        match handle.timeout(Duration::from_secs(1)).reply().await {
             Ok(Ok(response)) => println!("   Batch response {}: {}", i + 1, response),
             Ok(Err(e)) => println!("   Batch actor error {}: {}", i + 1, e),
             Err(e) => println!("   Batch error {}: {}", i + 1, e),

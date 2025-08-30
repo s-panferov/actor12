@@ -143,7 +143,7 @@ async fn main() -> anyhow::Result<()> {
     // NEW API: Two-step pattern with timeout
     println!("   NEW API - Two-step with timeout:");
     let handle = handler_actor.send_message(HandlerMessage::new(TestMessage("Handler test".to_string()))).await;
-    match handle.reply_timeout(Duration::from_millis(500)).await {
+    match handle.timeout(Duration::from_millis(500)).reply().await {
         Ok(Ok(response)) => println!("     Response: {}", response),
         Ok(Err(e)) => println!("     Actor Error: {}", e),
         Err(e) => println!("     Timeout Error: {}", e),

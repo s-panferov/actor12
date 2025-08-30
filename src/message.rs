@@ -16,6 +16,7 @@ pub struct MessageHandle<R> {
     receiver: Option<oneshot::Receiver<R>>,
     sent_successfully: bool,
     send_error: Option<String>,
+    timeout: Option<Duration>,
 }
 
 /// Errors that can occur when handling message responses
@@ -38,6 +39,7 @@ impl<R> MessageHandle<R> {
             receiver: Some(receiver),
             sent_successfully: true,
             send_error: None,
+            timeout: None,
         }
     }
 
@@ -47,7 +49,14 @@ impl<R> MessageHandle<R> {
             receiver: None,
             sent_successfully: false,
             send_error: Some(error),
+            timeout: None,
         }
+    }
+
+    /// Set timeout for the reply (chainable)
+    pub fn timeout(mut self, timeout: Duration) -> Self {
+        self.timeout = Some(timeout);
+        self
     }
 
     /// Wait for the reply from the actor
@@ -61,16 +70,16 @@ impl<R> MessageHandle<R> {
         let receiver = self.receiver.take()
             .ok_or(MessageError::AlreadyConsumed)?;
 
-        receiver.await.map_err(MessageError::RecvFailed)
-    }
-
-    /// Wait for reply with timeout
-    pub async fn reply_timeout(self, timeout: Duration) -> Result<R, MessageError> {
-        match tokio::time::timeout(timeout, self.reply()).await {
-            Ok(result) => result,
-            Err(_) => Err(MessageError::Timeout { timeout }),
+        if let Some(timeout) = self.timeout {
+            match tokio::time::timeout(timeout, receiver).await {
+                Ok(result) => result.map_err(MessageError::RecvFailed),
+                Err(_) => Err(MessageError::Timeout { timeout }),
+            }
+        } else {
+            receiver.await.map_err(MessageError::RecvFailed)
         }
     }
+
 
     /// Fire and forget - explicitly drop the response receiver
     pub fn forget(mut self) {
