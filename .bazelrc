@@ -1,0 +1,19 @@
+# General build options
+build --incompatible_strict_action_env
+
+# Enable bzlmod
+common --enable_bzlmod
+
+# Rust-specific options
+build --@rules_rust//:rustfmt.toml=//:rustfmt.toml
+
+# Test output
+test --test_output=errors
+
+# Performance optimizations
+build --jobs=auto
+build --local_ram_resources=HOST_RAM*0.75
+
+# Developer experience
+common --color=yes
+common --curses=yes

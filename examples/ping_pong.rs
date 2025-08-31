@@ -1,5 +1,6 @@
 use actor12::prelude::*;
 use actor12::{Multi, MpscChannel, Call, spawn, Link};
+use std::future::Future;
 use std::time::Duration;
 use tokio::time::sleep;
 

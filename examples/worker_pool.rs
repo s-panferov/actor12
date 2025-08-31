@@ -1,6 +1,7 @@
 use actor12::prelude::*;
 use actor12::{Multi, MpscChannel, Call, spawn};
 use std::time::Duration;
+use std::future::Future;
 use tokio::time::sleep;
 
 // Worker actor that processes tasks

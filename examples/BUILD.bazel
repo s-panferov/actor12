@@ -1,0 +1,76 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+
+package(default_visibility = ["//visibility:private"])
+
+# Common dependencies for examples
+EXAMPLE_DEPS = [
+    "//:actor12",
+    "@crates//:anyhow",
+    "@crates//:futures",
+    "@crates//:tokio",
+    "@crates//:thiserror",
+]
+
+# Bank account example
+rust_binary(
+    name = "bank_account",
+    srcs = ["bank_account.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Basic actor example
+rust_binary(
+    name = "basic_actor",
+    srcs = ["basic_actor.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Dynamic dispatch example
+rust_binary(
+    name = "dynamic_dispatch",
+    srcs = ["dynamic_dispatch.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Echo server example
+rust_binary(
+    name = "echo_server",
+    srcs = ["echo_server.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Handler pattern example
+rust_binary(
+    name = "handler_pattern",
+    srcs = ["handler_pattern.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Ping pong example
+rust_binary(
+    name = "ping_pong",
+    srcs = ["ping_pong.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Simple counter example
+rust_binary(
+    name = "simple_counter",
+    srcs = ["simple_counter.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)
+
+# Worker pool example
+rust_binary(
+    name = "worker_pool",
+    srcs = ["worker_pool.rs"],
+    edition = "2024",
+    deps = EXAMPLE_DEPS,
+)

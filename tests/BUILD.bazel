@@ -1,0 +1,38 @@
+load("@rules_rust//rust:defs.bzl", "rust_test")
+
+package(default_visibility = ["//visibility:private"])
+
+# Dynamic message test
+rust_test(
+    name = "dynmsg",
+    srcs = ["dynmsg.rs"],
+    edition = "2024",
+    deps = [
+        "//:actor12",
+        "@crates//:anyhow",
+        "@crates//:futures",
+        "@crates//:tokio",
+    ],
+)
+
+# Regular test
+rust_test(
+    name = "regular",
+    srcs = ["regular.rs"],
+    edition = "2024",
+    deps = [
+        "//:actor12",
+        "@crates//:anyhow",
+        "@crates//:futures",
+        "@crates//:tokio",
+    ],
+)
+
+# Test suite alias
+test_suite(
+    name = "all_tests",
+    tests = [
+        ":dynmsg",
+        ":regular",
+    ],
+)

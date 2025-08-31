@@ -1,0 +1,25 @@
+module(
+    name = "actor12",
+    version = "0.0.4",
+)
+
+# Bazel rules for Rust
+bazel_dep(name = "rules_rust", version = "0.63.0")
+
+# Rust toolchain
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(edition = "2024", versions = ["1.88.0"])
+use_repo(rust, "rust_toolchains")
+
+register_toolchains("@rust_toolchains//:all")
+
+# Crate universe for dependency management
+crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
+
+crate.from_cargo(
+    name = "crates",
+    cargo_lockfile = "//:Cargo.lock",
+    manifests = ["//:Cargo.toml"],
+)
+
+use_repo(crate, "crates")

@@ -1,0 +1,42 @@
+load("@rules_rust//rust:defs.bzl", "rust_doc", "rust_doc_test", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# Main library
+rust_library(
+    name = "actor12",
+    srcs = glob(["src/**/*.rs"]),
+    crate_root = "src/lib.rs",
+    edition = "2024",
+    deps = [
+        "@crates//:anyhow",
+        "@crates//:arc-swap",
+        "@crates//:dashmap",
+        "@crates//:downcast-rs",
+        "@crates//:futures",
+        "@crates//:metrics",
+        "@crates//:parking_lot",
+        "@crates//:take-once",
+        "@crates//:thiserror",
+        "@crates//:tokio",
+        "@crates//:tracing",
+    ],
+)
+
+# Documentation
+rust_doc(
+    name = "actor12_doc",
+    crate = ":actor12",
+)
+
+# Documentation tests
+rust_doc_test(
+    name = "actor12_doc_test",
+    crate = ":actor12",
+)
+
+# Export the library for use in other BUILD files
+alias(
+    name = "lib",
+    actual = ":actor12",
+)

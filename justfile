@@ -75,3 +75,19 @@ clean-history:
 # Publish crate to crates.io
 publish:
     cargo publish
+
+# Bazel build and test commands
+bazel-build:
+    bazel build //:actor12
+
+bazel-build-all:
+    bazel build //:actor12 //examples:all
+
+bazel-test:
+    bazel test //tests:all
+
+bazel-clean:
+    bazel clean
+
+bazel-run-example name:
+    bazel run //examples:{{name}}
