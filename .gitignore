@@ -91,3 +91,6 @@ docs/node_modules/
 
 # History cleaning script (sensitive - can rewrite git history)
 scripts/clean-history.ts
+
+# Bazel files and directories
+bazel-*
