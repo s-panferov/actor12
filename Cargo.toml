@@ -2,7 +2,7 @@
 authors = ["Stanislav Panferov <stanislav@panferov.dev>"]
 edition = "2024"
 name = "actor12"
-version = "0.0.4"
+version = "0.0.5"
 description = "A lightweight actor framework for Rust with async support"
 documentation = "https://docs.rs/actor12"
 repository = "https://github.com/s-panferov/actor12"
