@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 24 commits contributed to the release over the course of 125 calendar days.
+ - 26 commits contributed to the release over the course of 125 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - CHANGELOG.md ([`f77c6a4`](https://github.com/s-panferov/actor12/commit/f77c6a492d6c8a56ba147e788338843dff8a4e13))
+    - Adjusting changelogs prior to release of actor12 v0.0.5 ([`e5491a6`](https://github.com/s-panferov/actor12/commit/e5491a6a980d93c1dccc283c9d7a3ccd8888851c))
     - CHANGELOG.md ([`c895697`](https://github.com/s-panferov/actor12/commit/c895697086f8c92a04aa2bbb2d9cae14d45052ba))
     - Deps ([`ca7016a`](https://github.com/s-panferov/actor12/commit/ca7016a372915c9f6fbef0c4a1cd6073888fd6c7))
     - Better Self::tick API ([`bffeb57`](https://github.com/s-panferov/actor12/commit/bffeb57aef71a81111b46b0208021d0ac4671189))
@@ -47,3 +49,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Add development learnings documentation ([`1cb3cde`](https://github.com/s-panferov/actor12/commit/1cb3cde2ffc7224f7a6a5c80c0e9a682d2e1774c))
     - Initial commit: Actor12 framework ([`f8f0a01`](https://github.com/s-panferov/actor12/commit/f8f0a0128206f057c6859a1b8f1b7d76d17eb6a9))
 </details>
+
