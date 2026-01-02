@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 23 commits contributed to the release over the course of 125 calendar days.
+ - 24 commits contributed to the release over the course of 125 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - CHANGELOG.md ([`c895697`](https://github.com/s-panferov/actor12/commit/c895697086f8c92a04aa2bbb2d9cae14d45052ba))
     - Deps ([`ca7016a`](https://github.com/s-panferov/actor12/commit/ca7016a372915c9f6fbef0c4a1cd6073888fd6c7))
     - Better Self::tick API ([`bffeb57`](https://github.com/s-panferov/actor12/commit/bffeb57aef71a81111b46b0208021d0ac4671189))
     - Release 0.0.5 ([`a21e11f`](https://github.com/s-panferov/actor12/commit/a21e11fac22a93a1a95b1949003b99f35a98bdb2))
