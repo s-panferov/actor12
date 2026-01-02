@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 26 commits contributed to the release over the course of 125 calendar days.
+ - 28 commits contributed to the release over the course of 125 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Add changelog entries for v0.0.5 ([`4f8fbd7`](https://github.com/s-panferov/actor12/commit/4f8fbd72f54662b23535dc02ac62d76feccf983f))
+    - Adjusting changelogs prior to release of actor12 v0.0.5 ([`4d6f479`](https://github.com/s-panferov/actor12/commit/4d6f479be805cb12cb1ff04c932dc7042d2ae7a8))
     - CHANGELOG.md ([`f77c6a4`](https://github.com/s-panferov/actor12/commit/f77c6a492d6c8a56ba147e788338843dff8a4e13))
     - Adjusting changelogs prior to release of actor12 v0.0.5 ([`e5491a6`](https://github.com/s-panferov/actor12/commit/e5491a6a980d93c1dccc283c9d7a3ccd8888851c))
     - CHANGELOG.md ([`c895697`](https://github.com/s-panferov/actor12/commit/c895697086f8c92a04aa2bbb2d9cae14d45052ba))
