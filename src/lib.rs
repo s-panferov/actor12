@@ -4,7 +4,7 @@
 //!
 //! ## Overview
 //!
-//! Actor12 provides a simple yet powerful actor model implementation that leverages 
+//! Actor12 provides a simple yet powerful actor model implementation that leverages
 //! Rust's type system and async capabilities. Actors are isolated units of computation
 //! that communicate through message passing, ensuring thread safety and preventing
 //! data races.
@@ -68,7 +68,9 @@
 //! - Worker pools
 
 mod actor;
+pub mod cancel;
 mod channel;
+mod countme;
 mod drop;
 mod envelope;
 mod error;
@@ -77,20 +79,17 @@ mod link;
 mod multi;
 mod proxy;
 mod weak;
-mod cancel;
-mod countme;
-
 
 /// Common imports for working with the Actor12 framework.
 ///
 /// This module re-exports the most commonly used types and traits,
 /// allowing for convenient imports with `use actor12::prelude::*;`
 pub mod prelude {
-	pub use super::actor::Actor;
-	pub use super::actor::Init;
-	pub use super::actor::InitFuture;
-	pub use super::handler::Exec;
-	pub use super::handler::Handler;
+    pub use super::actor::Actor;
+    pub use super::actor::Init;
+    pub use super::actor::InitFuture;
+    pub use super::handler::Exec;
+    pub use super::handler::Handler;
 }
 
 pub use actor::Actor;
@@ -150,5 +149,5 @@ pub use weak::WeakLink;
 /// let link = spawn::<MyActor>(());
 /// ```
 pub fn spawn<A: Actor>(spec: A::Spec) -> Link<A> {
-	A::spawn(spec)
+    A::spawn(spec)
 }
