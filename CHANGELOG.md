@@ -5,17 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.0.5 (2026-01-02)
-
-### Changed
-
-- Improved `Self::tick` API for better ergonomics
+## v0.0.6 (2026-01-02)
 
 ### Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 28 commits contributed to the release over the course of 125 calendar days.
+ - 31 commits contributed to the release over the course of 125 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Update Cargo.lock ([`d302498`](https://github.com/s-panferov/actor12/commit/d3024981c9eee680edcc53a76866a86ff7d00b6f))
+    - Bump version to 0.0.6 ([`7c47cfb`](https://github.com/s-panferov/actor12/commit/7c47cfb97acb0007dc27abf811ccde72dc201d6b))
+    - Release actor12 v0.0.5 ([`31717b5`](https://github.com/s-panferov/actor12/commit/31717b5b9020cdcaa5461bdb942225d5537e4c60))
     - Add changelog entries for v0.0.5 ([`4f8fbd7`](https://github.com/s-panferov/actor12/commit/4f8fbd72f54662b23535dc02ac62d76feccf983f))
     - Adjusting changelogs prior to release of actor12 v0.0.5 ([`4d6f479`](https://github.com/s-panferov/actor12/commit/4d6f479be805cb12cb1ff04c932dc7042d2ae7a8))
     - CHANGELOG.md ([`f77c6a4`](https://github.com/s-panferov/actor12/commit/f77c6a492d6c8a56ba147e788338843dff8a4e13))
@@ -55,4 +54,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Add development learnings documentation ([`1cb3cde`](https://github.com/s-panferov/actor12/commit/1cb3cde2ffc7224f7a6a5c80c0e9a682d2e1774c))
     - Initial commit: Actor12 framework ([`f8f0a01`](https://github.com/s-panferov/actor12/commit/f8f0a0128206f057c6859a1b8f1b7d76d17eb6a9))
 </details>
+
+## v0.0.5 (2026-01-02)
+
+### Changed
+
+- Improved `Self::tick` API for better ergonomics
 
