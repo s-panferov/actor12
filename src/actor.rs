@@ -157,7 +157,7 @@ pub trait Actor: Sized + Send + Sync + 'static {
     fn init(ctx: Init<'_, Self>) -> impl InitFuture<Self>;
 
     fn spawn(spec: Self::Spec) -> Link<Self> {
-        let count = crate::countme::Count::<Self>::new();
+        let count = crate::count::Count::<Self>::new();
 
         let (tx, rx) = Self::Channel::create(10);
         let token = CancelToken::<Self::Cancel>::new();

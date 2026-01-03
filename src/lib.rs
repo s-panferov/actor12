@@ -70,7 +70,7 @@
 mod actor;
 pub mod cancel;
 mod channel;
-mod countme;
+pub mod count;
 mod drop;
 mod envelope;
 mod error;
