@@ -12,10 +12,10 @@ use dashmap::DashMap;
 #[derive(Debug)]
 pub struct Stats {
     #[allow(dead_code)]
-    type_name: &'static str,
-    total: AtomicUsize,
-    max_live: AtomicUsize,
-    live: AtomicUsize,
+    pub type_name: &'static str,
+    pub total: AtomicUsize,
+    pub max_live: AtomicUsize,
+    pub live: AtomicUsize,
 }
 
 impl Stats {
@@ -90,7 +90,7 @@ impl<T: 'static> Default for Count<T> {
 #[allow(dead_code)]
 pub struct Report {
     // Use BTreeMap to keep the report sorted by type name.
-    by_type: BTreeMap<&'static str, (usize, usize, usize)>,
+    pub by_type: BTreeMap<&'static str, (usize, usize, usize)>,
 }
 
 impl Report {
