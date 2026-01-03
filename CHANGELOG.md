@@ -11,17 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Expose more counts
 
-## v0.0.7 (2026-01-03)
-
-### Changed
-
-- Exposed counts in actor context
-
 ### Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 5 commits contributed to the release.
+ - 1 commit contributed to the release.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -32,6 +26,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - V0.0.8 ([`4a3ea29`](https://github.com/s-panferov/actor12/commit/4a3ea29316b89107cc8dd8f28fd5729d4968557a))
+</details>
+
+## v0.0.7 (2026-01-03)
+
+### Changed
+
+- Exposed counts in actor context
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 6 commits contributed to the release.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Release actor12 v0.0.7 ([`3c13bf6`](https://github.com/s-panferov/actor12/commit/3c13bf6af90bdcca030c06b2da67d9ed25de2aa0))
     - V0.0.7 ([`41e62c4`](https://github.com/s-panferov/actor12/commit/41e62c4227a626c9832950ffa714ef02d8a016e1))
     - Release actor12 v0.0.6 ([`402255f`](https://github.com/s-panferov/actor12/commit/402255fb4ed8a0370269b17ac8d189a2d6132aad))
     - Expose counts ([`a22b1fe`](https://github.com/s-panferov/actor12/commit/a22b1fed6cbb4638a7379ac7338f12b50e76e6bd))
@@ -102,3 +121,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improved `Self::tick` API for better ergonomics
+
