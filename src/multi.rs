@@ -1,5 +1,4 @@
 use std::future::Future;
-use std::sync::Arc;
 
 use futures::FutureExt as _;
 use futures::future::BoxFuture;
@@ -8,7 +7,6 @@ use take_once::TakeOnce;
 use crate::actor::ActorMessage;
 use crate::actor::SyncTrait;
 use crate::envelope::Envelope;
-use crate::handler::ActorReply;
 use crate::handler::Call;
 use crate::handler::Exec;
 use crate::handler::Handler;
@@ -62,28 +60,29 @@ where
 {
 	fn handle<'a>(self: Box<Self>, state: &'a mut A, ctx: Exec<'a, A>) -> BoxFuture<'a, ()> {
 		let (msg, reply) = self.envelope.split();
-		let once = TakeOnce::new();
-		let _ = once.store(reply);
-		let once = Arc::new(once);
-		let context = Call {
-			ctx: ctx,
-			reply: once.clone(),
-		};
 
-		let future = Handler::<M>::handle(state, context, msg);
+		async move {
+			// `once` lives on the wrapper future's stack; `Call` borrows it,
+			// so there is no per-message `Arc` allocation.
+			let once = TakeOnce::new();
+			let _ = once.store(reply);
 
-		let future = async move {
-			let value = future.await;
-			if value.is_async() {
-				return;
-			} else {
-				let _ = once
-					.take()
-					.expect("Reply channel should not be copied")
-					.send(value);
+			let value = {
+				let context = Call {
+					// Reborrow the actor context to the (shorter) lifetime of `once`.
+					ctx: Exec { ctx: &mut *ctx.ctx },
+					reply: &once,
+				};
+				Handler::<M>::handle(&mut *state, context, msg).await
+			};
+
+			// If the handler took the sender (manual `take_reply` or `reply_async`),
+			// `once` is empty and delivery is the handler's responsibility.
+			// Otherwise deliver the returned value now.
+			if let Some(tx) = once.take() {
+				let _ = tx.send(value);
 			}
-		};
-
-		future.boxed()
+		}
+		.boxed()
 	}
 }

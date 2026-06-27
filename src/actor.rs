@@ -99,6 +99,13 @@ pub trait Actor: Sized + Send + Sync + 'static {
         tracing::info_span!("Actor")
     }
 
+    /// Capacity of the actor's mailbox (the bounded channel buffer).
+    ///
+    /// Override to tune backpressure for this actor type. Defaults to 64.
+    fn mailbox_capacity() -> usize {
+        64
+    }
+
     fn state(spec: &Self::Spec) -> Self::State;
 
     fn termination_strategy(&mut self) -> Terminate {
@@ -168,7 +175,7 @@ pub trait Actor: Sized + Send + Sync + 'static {
     fn spawn(spec: Self::Spec) -> Link<Self> {
         let count = crate::count::Count::<Self>::new();
 
-        let (tx, rx) = Self::Channel::create(10);
+        let (tx, rx) = Self::Channel::create(Self::mailbox_capacity());
         let token = CancelToken::<Self::Cancel>::new();
 
         let mut link: Link<Self> = Link::new(tx, token.clone(), Self::state(&spec));

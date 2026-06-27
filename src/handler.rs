@@ -1,9 +1,7 @@
 use std::future::Future;
 use std::ops::Deref;
 use std::ops::DerefMut;
-use std::sync::Arc;
 
-use downcast_rs::DowncastSync;
 use take_once::TakeOnce;
 use tokio::sync::oneshot::error::RecvError;
 
@@ -15,27 +13,6 @@ use crate::error::ActorSendError;
 use crate::error::FromError;
 use crate::link::ActorLike;
 
-pub trait ActorReply: DowncastSync {
-    fn is_async(&self) -> bool;
-}
-
-downcast_rs::impl_downcast!(sync ActorReply);
-
-impl<T> ActorReply for anyhow::Result<T>
-where
-    T: Send + Sync + 'static,
-{
-    fn is_async(&self) -> bool {
-        match self {
-            Ok(_) => false,
-            Err(e) => match e.downcast_ref::<ActorError>() {
-                Some(err) => matches!(err, ActorError::AsyncReply),
-                None => false,
-            },
-        }
-    }
-}
-
 pub trait Handler<M>: ActorLike
 where
     M: SyncTrait,
@@ -45,8 +22,7 @@ where
         + 'static
         + FromError<ActorSendError<Self>>
         + FromError<RecvError>
-        + FromError<ActorError>
-        + ActorReply;
+        + FromError<ActorError>;
 
     fn handle<'a>(
         &'a mut self,
@@ -60,7 +36,7 @@ pub struct Exec<'a, A: ActorLike> {
 }
 
 pub struct Call<'a, A: ActorLike, R> {
-    pub(crate) reply: Arc<TakeOnce<tokio::sync::oneshot::Sender<R>>>,
+    pub(crate) reply: &'a TakeOnce<tokio::sync::oneshot::Sender<R>>,
     pub ctx: Exec<'a, A>,
 }
 
@@ -88,7 +64,7 @@ impl<A, R> Call<'_, A, R>
 where
     A: Actor,
     R: Send + Sync + 'static,
-    R: FromError<ActorError> + ActorReply,
+    R: FromError<ActorError>,
 {
     pub fn take_reply(&mut self) -> tokio::sync::oneshot::Sender<R> {
         self.reply.take().unwrap()
