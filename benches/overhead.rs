@@ -60,6 +60,28 @@ fn actor_benchmarks(c: &mut Criterion) {
     group.finish();
 }
 
+fn spawn_benchmarks(c: &mut Criterion) {
+    let mut group = c.benchmark_group("actor12 Lifecycle");
+
+    // Full spawn -> ready -> shutdown cycle. This is where the per-actor task
+    // count matters (currently 2 tokio tasks per actor: loop + monitor).
+    // Multi-threaded runtime to reflect real many-actor scheduling.
+    group.bench_function("spawn_shutdown", |b| {
+        let rt = Builder::new_multi_thread()
+            .worker_threads(4)
+            .enable_all()
+            .build()
+            .unwrap();
+        b.to_async(&rt).iter(|| async {
+            let link = spawn::<MyActor>(());
+            link.ask_dyn(0u32).await.unwrap(); // ensure fully started
+            link.cancel_and_wait(()).await; // shutdown and wait for the loop to exit
+        });
+    });
+
+    group.finish();
+}
+
 fn plain_benchmarks(c: &mut Criterion) {
     let mut group = c.benchmark_group("Plain Tokio Task");
 
@@ -83,5 +105,5 @@ fn plain_benchmarks(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, actor_benchmarks, plain_benchmarks);
+criterion_group!(benches, actor_benchmarks, spawn_benchmarks, plain_benchmarks);
 criterion_main!(benches);
