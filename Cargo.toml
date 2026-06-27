@@ -26,6 +26,11 @@ parking_lot = "0.12"
 dashmap = "6.0"
 
 [dev-dependencies]
+criterion = { version = "0.5", features = ["async_tokio"] }
+
+[[bench]]
+name = "overhead"
+harness = false
 
 [[example]]
 name = "basic_actor"
