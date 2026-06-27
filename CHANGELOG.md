@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.0.10 (2026-06-27)
 
 ### Added
 
@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 11 commits contributed to the release.
+ - 12 commits contributed to the release.
  - 175 days passed between releases.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Curate changelog for v0.0.10 ([`d32e393`](https://github.com/s-panferov/actor12/commit/d32e39380192dd2e98cc00afe84004c14a6192c6))
     - Merge bench-infra: link docs, README overhaul, dual licensing ([`b1b8459`](https://github.com/s-panferov/actor12/commit/b1b84597f2d54791ca040f36836e7b93cf75f1d7))
     - Merge pull request #5 from s-panferov/docs/readme-license ([`99119d2`](https://github.com/s-panferov/actor12/commit/99119d20bc90d7f218e9c6c4aeb9db63e766a1b1))
     - Overhaul README and dual-license MIT OR Apache-2.0 ([`83814df`](https://github.com/s-panferov/actor12/commit/83814dfca24c6bf77a0e1b08df4bf592bb6bb915))
