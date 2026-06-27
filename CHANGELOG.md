@@ -5,17 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.0.9 (2026-01-03)
+## Unreleased
+
+### Added
+
+- Configurable mailbox capacity via `Actor::mailbox_capacity` (defaults to 64) for tuning backpressure per actor type.
+- Module-level and full API documentation for `Link`, `DynLink`, and the `link` module.
+- Benchmark infrastructure (criterion overhead bench).
 
 ### Changed
 
-- Expose more counts
+- Dual-licensed under `MIT OR Apache-2.0` (previously MIT).
+- Overhauled the README with rationale and runnable examples covering static vs. dynamic messages, custom state/props, custom `tick`/`cycle` loops, and `anyhow` error handling.
+- Reduced per-actor overhead: collapsed the two tasks per actor into one (panics are now caught inline) and dropped the per-message `Arc` and reply downcast.
 
 ### Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 11 commits contributed to the release.
+ - 175 days passed between releases.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +35,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Merge bench-infra: link docs, README overhaul, dual licensing ([`b1b8459`](https://github.com/s-panferov/actor12/commit/b1b84597f2d54791ca040f36836e7b93cf75f1d7))
+    - Merge pull request #5 from s-panferov/docs/readme-license ([`99119d2`](https://github.com/s-panferov/actor12/commit/99119d20bc90d7f218e9c6c4aeb9db63e766a1b1))
+    - Overhaul README and dual-license MIT OR Apache-2.0 ([`83814df`](https://github.com/s-panferov/actor12/commit/83814dfca24c6bf77a0e1b08df4bf592bb6bb915))
+    - Merge pull request #4 from s-panferov/docs/link-rs ([`8f95e69`](https://github.com/s-panferov/actor12/commit/8f95e690ada2795c3e012fa6232166607a540a1f))
+    - Document Link, DynLink, and the link module ([`599b0eb`](https://github.com/s-panferov/actor12/commit/599b0eb96b8e7a70cb2d12209c20bf80593ed522))
+    - Merge pull request #3 from s-panferov/bench-infra ([`18ded00`](https://github.com/s-panferov/actor12/commit/18ded006001dda174dc63e7669eda0d1cbf26c9c))
+    - Configurable mailbox capacity; drop per-message Arc and reply downcast ([`f2a67ef`](https://github.com/s-panferov/actor12/commit/f2a67ef62d37cb8e80b74c81655942b1c25f7db5))
+    - Merge pull request #2 from s-panferov/bench-infra ([`bce7abf`](https://github.com/s-panferov/actor12/commit/bce7abf632bf965c01635bd97f6b573d770c4597))
+    - Collapse two tasks per actor into one (catch panics inline) ([`a7c48b0`](https://github.com/s-panferov/actor12/commit/a7c48b09c6a88af22b66a747d2a2e2f30ba51328))
+    - Merge pull request #1 from s-panferov/bench-infra ([`a85f7cf`](https://github.com/s-panferov/actor12/commit/a85f7cfeff92460327befde912cd82d0d1b8ec8a))
+    - Add benchmark infrastructure (criterion overhead bench) ([`4b42b30`](https://github.com/s-panferov/actor12/commit/4b42b30accdccf07f1f5ed3376cd4873655ae628))
+</details>
+
+## v0.0.9 (2026-01-03)
+
+### Changed
+
+- Expose more counts
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 2 commits contributed to the release.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Release actor12 v0.0.9 ([`02d49cd`](https://github.com/s-panferov/actor12/commit/02d49cd3893bf3412138114240539928cd2ba1df))
     - Even more counts ([`81ff38e`](https://github.com/s-panferov/actor12/commit/81ff38e65733ce30f28d6ab0d79b286b02e5d6f9))
 </details>
 
