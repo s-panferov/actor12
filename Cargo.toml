@@ -6,7 +6,7 @@ version = "0.0.9"
 description = "A lightweight actor framework for Rust with async support"
 documentation = "https://docs.rs/actor12"
 repository = "https://github.com/s-panferov/actor12"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 
 [package.metadata.docs.rs]
 all-features = true
