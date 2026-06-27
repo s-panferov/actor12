@@ -1,11 +1,13 @@
+use std::any::Any;
 use std::any::type_name;
 use std::fmt::Debug;
 use std::future::Future;
 use std::ops::ControlFlow;
+use std::panic::AssertUnwindSafe;
 
 use crate::cancel::CancelReason;
 use crate::cancel::CancelToken;
-use tokio::task::JoinError;
+use futures::FutureExt;
 use tokio::task::JoinSet;
 use tracing::Instrument;
 
@@ -139,9 +141,16 @@ pub trait Actor: Sized + Send + Sync + 'static {
         }
     }
 
-    fn crash(err: JoinError) -> impl Future<Output = ()> + Send {
+    fn crash(payload: Box<dyn Any + Send>) -> impl Future<Output = ()> + Send {
         async move {
-            tracing::error!("ACTOR DIED: {err:?}");
+            let msg = match payload.downcast::<String>() {
+                Ok(s) => *s,
+                Err(payload) => match payload.downcast::<&'static str>() {
+                    Ok(s) => s.to_string(),
+                    Err(_) => "unknown panic".to_string(),
+                },
+            };
+            tracing::error!("ACTOR DIED: {msg}");
             std::process::exit(-1);
         }
     }
@@ -179,57 +188,58 @@ pub trait Actor: Sized + Send + Sync + 'static {
             {
                 let span = span.clone();
                 async move {
-                    let state = state.in_current_span().await;
+                    // Keep the live-instance counter alive for the actor's whole lifetime.
+                    let _count_guard = count;
 
-                    let mut state = match state {
-                        Ok(state) => state,
-                        Err(cancel) => {
-                            tracing::error!(
-                                reason = ?cancel,
-                                "Actor terminated before initialization"
-                            );
-                            token.cancel(cancel);
-                            return;
+                    let lifecycle = async move {
+                        let state = state.in_current_span().await;
+
+                        let mut state = match state {
+                            Ok(state) => state,
+                            Err(cancel) => {
+                                tracing::error!(
+                                    reason = ?cancel,
+                                    "Actor terminated before initialization"
+                                );
+                                token.cancel(cancel);
+                                return;
+                            }
+                        };
+
+                        let mut ctx = ActorContext {
+                            rx,
+                            token,
+                            futures: join_set,
+                            span: span.clone(),
+                            link: weak,
+                        };
+
+                        let reason = loop {
+                            match Self::cycle(&mut state, &mut ctx).in_current_span().await {
+                                ControlFlow::Continue(_) => {}
+                                ControlFlow::Break(reason) => break reason,
+                            }
+                        };
+
+                        Actor::terminate(state, ctx, reason).in_current_span().await;
+                    };
+
+                    // Catch panics inline so we don't need a separate monitor task.
+                    match AssertUnwindSafe(lifecycle).catch_unwind().await {
+                        Ok(()) => {
+                            tracing::info!("Actor {} completed gracefully", type_name::<Self>());
                         }
-                    };
-
-                    let mut ctx = ActorContext {
-                        rx,
-                        token,
-                        futures: join_set,
-                        span: span.clone(),
-                        link: weak,
-                    };
-
-                    let reason = loop {
-                        match Self::cycle(&mut state, &mut ctx).in_current_span().await {
-                            ControlFlow::Continue(_) => {}
-                            ControlFlow::Break(reason) => break reason,
+                        Err(payload) => {
+                            tracing::error!("Actor {} crashed", type_name::<Self>());
+                            Self::crash(payload).await;
                         }
-                    };
-
-                    Actor::terminate(state, ctx, reason).in_current_span().await;
+                    }
                 }
             }
             .instrument(span.clone()),
         );
 
-        let monitor_handle = tokio::spawn(async move {
-            let result = handle.await;
-            match result {
-                Ok(()) => {
-                    tracing::info!("Actor {} completed gracefully", type_name::<Self>());
-                }
-                Err(err) => {
-                    tracing::error!("Actor {} crashed", type_name::<Self>());
-                    Self::crash(err).await
-                }
-            }
-
-            let _count_guard = count;
-        });
-
-        link.set_monitor(monitor_handle);
+        link.set_monitor(handle);
         link
     }
 }
