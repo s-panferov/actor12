@@ -16,8 +16,82 @@ use crate::link::ActorLike;
 use crate::link::LinkState;
 use crate::multi::Multi;
 
+/// A non-owning handle to an actor, obtained via [`Link::downgrade`].
+///
+/// A `WeakLink` does not keep the actor alive. It can also be *empty*
+/// ([`WeakLink::new`] / [`Default`]) and pointed at an actor later with
+/// [`set`](WeakLink::set) or [`try_set`](WeakLink::try_set). An empty link
+/// behaves exactly like a link to a dead actor: [`upgrade`](WeakLink::upgrade)
+/// returns `None`, sends resolve to [`ActorError::Dead`] and cancels are no-ops.
+///
+/// Equality and hashing are by identity; all empty links compare equal.
 pub struct WeakLink<A: ActorLike> {
     state: std::sync::Weak<LinkState<A>>,
+}
+
+impl<A: ActorLike> WeakLink<A> {
+    /// Creates an empty link that points at no actor. Does not allocate.
+    pub fn new() -> Self {
+        Self {
+            state: std::sync::Weak::new(),
+        }
+    }
+
+    /// Returns `true` if the link has been pointed at an actor, even if that
+    /// actor has since shut down. Returns `false` for an empty link.
+    pub fn is_set(&self) -> bool {
+        !self.state.ptr_eq(&std::sync::Weak::new())
+    }
+
+    /// Points the link at `link`'s actor, replacing any previous target.
+    pub fn set(&mut self, link: &Link<A>) {
+        self.state = Arc::downgrade(&link.state);
+    }
+
+    /// Points the link at `link`'s actor only if it is still empty.
+    ///
+    /// Returns `true` if the link was set, `false` if it already had a target
+    /// (which is left unchanged).
+    pub fn try_set(&mut self, link: &Link<A>) -> bool {
+        if self.is_set() {
+            return false;
+        }
+        self.set(link);
+        true
+    }
+
+    /// Resets the link to empty.
+    pub fn clear(&mut self) {
+        self.state = std::sync::Weak::new();
+    }
+
+    /// Takes the current target out, leaving the link empty.
+    pub fn take(&mut self) -> Self {
+        std::mem::take(self)
+    }
+}
+
+impl<A: ActorLike> Default for WeakLink<A> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<A: ActorLike> From<&Link<A>> for WeakLink<A> {
+    fn from(link: &Link<A>) -> Self {
+        Self {
+            state: Arc::downgrade(&link.state),
+        }
+    }
+}
+
+impl<A: ActorLike> std::fmt::Debug for WeakLink<A> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("WeakLink")
+            .field("set", &self.is_set())
+            .field("alive", &(self.state.strong_count() > 0))
+            .finish()
+    }
 }
 
 impl<A: ActorLike> Hash for WeakLink<A> {
@@ -34,7 +108,7 @@ impl<A: ActorLike> PartialEq for WeakLink<A> {
 
 impl<A: ActorLike> Eq for WeakLink<A> {}
 
-impl<A: Actor> Clone for WeakLink<A> {
+impl<A: ActorLike> Clone for WeakLink<A> {
     fn clone(&self) -> Self {
         Self {
             state: self.state.clone(),
