@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- `WeakLink` can now be empty and set later: `WeakLink::new`/`Default`, `set`, `try_set`, `clear`, `take`, `is_set`, `From<&Link>`, and a `Debug` impl. An empty link behaves like a link to a dead actor, at no extra runtime cost.
+
 ## 0.0.10 (2026-06-27)
 
 ### Added
