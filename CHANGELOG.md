@@ -5,11 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.0.11 (2026-10-10)
 
 ### Added
 
 - `WeakLink` can now be empty and set later: `WeakLink::new`/`Default`, `set`, `try_set`, `clear`, `take`, `is_set`, `From<&Link>`, and a `Debug` impl. An empty link behaves like a link to a dead actor, at no extra runtime cost.
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 2 commits contributed to the release.
+ - 104 days passed between releases.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Merge pull request #6 from s-panferov/feat/optional-weak-link ([`81d5143`](https://github.com/s-panferov/actor12/commit/81d5143127c8fb994ca9d39ebc0b5c5862e4cb93))
+    - Make WeakLink optional and settable ([`ff951db`](https://github.com/s-panferov/actor12/commit/ff951dba3db3f18fbc95713c1356b75abae18160))
+</details>
 
 ## 0.0.10 (2026-06-27)
 
@@ -29,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 12 commits contributed to the release.
+ - 13 commits contributed to the release.
  - 175 days passed between releases.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -41,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release actor12 v0.0.10 ([`4927290`](https://github.com/s-panferov/actor12/commit/492729054cf1ea41cb4c7d030c5d6a0290502b10))
     - Curate changelog for v0.0.10 ([`d32e393`](https://github.com/s-panferov/actor12/commit/d32e39380192dd2e98cc00afe84004c14a6192c6))
     - Merge bench-infra: link docs, README overhaul, dual licensing ([`b1b8459`](https://github.com/s-panferov/actor12/commit/b1b84597f2d54791ca040f36836e7b93cf75f1d7))
     - Merge pull request #5 from s-panferov/docs/readme-license ([`99119d2`](https://github.com/s-panferov/actor12/commit/99119d20bc90d7f218e9c6c4aeb9db63e766a1b1))
